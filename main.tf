@@ -1,6 +1,4 @@
-provider "local" {
-}
-resource "local_file" "terraform"{
-filename="terraform.txt"
-content="terraform-jenkins-integration"
+resource "local_file" "my_pet" {
+  filename = "pet.txt"
+  content = "welcome to the pet world"
 }
