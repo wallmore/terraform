@@ -1,0 +1,33 @@
+pipeline{ 
+  agent any
+  tools {
+      terraform 'terraform'
+  }
+  environment {
+        GIT_URL = "https://github.com/wallmore/terraform.git"
+        GIT_BRANCH = "main"
+    }
+stages {
+    stage('git-clone'){
+        steps {
+            git branch:"${GIT_BRANCH}",
+            url:"${GIT_URL}"
+        }
+    }
+    stage('terraform-init'){
+        steps {
+            sh 'terraform init'
+        }
+    }
+    stage('terraform-plan'){
+        steps {
+            sh 'terraform plan'
+        }
+    }
+    stage('terraform-apply'){
+        steps {
+            sh 'terraform apply -auto-approve'
+        }
+    }
+  }
+}
