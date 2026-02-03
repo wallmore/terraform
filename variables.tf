@@ -1,11 +1,11 @@
 variable "filename" {
   description = "file name of project"
-  default     = "windows.txt"
+  default     = "master.txt"
   type        = string
 }
 variable "content" {
   description = "content of the project"
-  default     = "welcome to the windows"
+  default     = "welcome to the Hyderabad"
   type = string
 }
 variable "prefix" {
