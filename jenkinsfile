@@ -1,40 +1,56 @@
-pipeline{ 
-  agent any
-  tools {
-      terraform 'terraform'
-  }
-  environment {
-        GIT_URL = "https://github.com/wallmore/terraform.git"
+pipeline {
+    agent any
+
+    tools {
+        terraform 'terraform'
+    }
+
+    environment {
+        GIT_URL    = "https://github.com/wallmore/terraform.git"
         GIT_BRANCH = "main"
     }
-stages {
-    stage('git-clone'){
-        steps {
-            git branch:"${GIT_BRANCH}",
-            url:"${GIT_URL}"
-        }
-    }
-    stage('terraform-init'){
-        steps {
-            withCredentials([
-            credentialsId: 'aws-creds'])
-            sh 'terraform init'
 
+    stages {
+
+        stage('Git Clone') {
+            steps {
+                git branch: "${GIT_BRANCH}",
+                    url: "${GIT_URL}"
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                withCredentials([
+                    [$class: 'AmazonWebServicesCredentialsBinding',
+                     credentialsId: 'aws-creds']
+                ]) {
+                    sh 'terraform init'
+                }
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                withCredentials([
+                    [$class: 'AmazonWebServicesCredentialsBinding',
+                     credentialsId: 'aws-creds']
+                ]) {
+                    sh 'terraform plan'
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                withCredentials([
+                    [$class: 'AmazonWebServicesCredentialsBinding',
+                     credentialsId: 'aws-creds']
+                ]) {
+                    sh 'terraform apply -auto-approve'
+                }
+            }
         }
     }
-    stage('terraform-plan'){
-        steps {
-            withCredentials([
-            credentialsId: 'aws-creds']
-            sh 'terraform plan'
-        }
-    }
-    stage('terraform-apply'){
-        steps {
-            withCredentials([
-            credentialsId: 'aws-creds']
-            sh 'terraform apply -auto-approve'
-        }
-    }
-  }
 }
+
