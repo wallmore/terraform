@@ -16,16 +16,23 @@ stages {
     }
     stage('terraform-init'){
         steps {
+            withCredentials([
+            credentialsId: 'aws-creds'])
             sh 'terraform init'
+
         }
     }
     stage('terraform-plan'){
         steps {
+            withCredentials([
+            credentialsId: 'aws-creds']
             sh 'terraform plan'
         }
     }
     stage('terraform-apply'){
         steps {
+            withCredentials([
+            credentialsId: 'aws-creds']
             sh 'terraform apply -auto-approve'
         }
     }
