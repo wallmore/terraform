@@ -2,55 +2,42 @@ pipeline {
     agent any
 
     tools {
-        terraform 'terraform'
-    }
-
-    environment {
-        GIT_URL    = "https://github.com/wallmore/terraform.git"
-        GIT_BRANCH = "main"
+        terraform 'Terraform-test'
     }
 
     stages {
 
-        stage('Git Clone') {
+        stage('Checkout Code') {
             steps {
-                git branch: "${GIT_BRANCH}",
-                    url: "${GIT_URL}"
+                checkout scm
             }
         }
 
         stage('Terraform Init') {
             steps {
-                withCredentials([
-                    [$class: 'AmazonWebServicesCredentialsBinding',
-                     credentialsId: 'aws-creds']
-                ]) {
-                    sh 'terraform init'
-                }
+                sh 'terraform init'
             }
         }
 
         stage('Terraform Plan') {
             steps {
-                withCredentials([
-                    [$class: 'AmazonWebServicesCredentialsBinding',
-                     credentialsId: 'aws-creds']
-                ]) {
-                    sh 'terraform plan'
-                }
+                sh 'terraform plan'
             }
         }
 
         stage('Terraform Apply') {
             steps {
-                withCredentials([
-                    [$class: 'AmazonWebServicesCredentialsBinding',
-                     credentialsId: 'aws-creds']
-                ]) {
-                    sh 'terraform apply -auto-approve'
-                }
+                sh 'terraform apply -auto-approve'
             }
         }
     }
-}
 
+    post {
+        success {
+            echo 'Terraform pipeline executed successfully ✅'
+        }
+        failure {
+            echo 'Terraform pipeline failed ❌'
+        }
+    }
+}
