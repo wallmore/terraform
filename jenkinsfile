@@ -1,9 +1,9 @@
 pipeline {
     agent any
 
-    tools {
-        terraform 'terraform'
-    }
+tools {
+    terraform 'Terraform-test'
+}
 
     environment {
         GIT_URL    = "https://github.com/wallmore/terraform.git"
